@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "538732502900",
+    "project_id": "wallet-tracker-101a8",
+    "storage_bucket": "wallet-tracker-101a8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:538732502900:android:26696feb1e6ffd0ebfd621",
+        "android_client_info": {
+          "package_name": "com.abdt.wallet_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUG8gXeUJ5h22yqe5pMSaVYYFjAKqO208"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
