@@ -4,6 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wallet_tracker/screens/add_expense/blocs/create_category/create_category_bloc.dart';
+import 'package:wallet_tracker/screens/add_expense/blocs/create_expense/create_expense_bloc.dart';
+import 'package:wallet_tracker/screens/add_expense/blocs/get_categories/get_categories_bloc.dart';
+import 'package:wallet_tracker/screens/home/blocs/get_expenses/get_expenses_bloc.dart';
 
 import '../../../config/app_colors.dart';
 import '../../add_expense/views/add_expense.dart';
@@ -19,7 +22,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-
   static const List<Widget> _screens = <Widget>[
     MainScreen(),
     StatsScreen(),
@@ -54,13 +56,30 @@ class _HomeScreenState extends State<HomeScreen> {
     return FloatingActionButton(
       onPressed: () {
         Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (BuildContext context) => BlocProvider(
-  create: (context) => CreateCategoryBloc(FirebaseExpenseRepo()),
-  child: const AddExpense(),
-),
+          MaterialPageRoute<bool>(
+            builder: (BuildContext context) => MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (context) =>
+                      CreateCategoryBloc(FirebaseExpenseRepo()),
+                ),
+                BlocProvider(
+                  create: (context) =>
+                      GetCategoriesBloc(FirebaseExpenseRepo())..add(GetCategories()),
+                ),
+                BlocProvider(
+                  create: (context) =>
+                      CreateExpenseBloc(FirebaseExpenseRepo()),
+                ),
+              ],
+              child: const AddExpense(),
+            ),
           ),
-        );
+        ).then((result) {
+          if (result == true) {
+            context.read<GetExpensesBloc>().add(GetExpenses());
+          }
+        });
       },
       shape: const CircleBorder(),
       child: Container(
@@ -83,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: _bottomNavigationBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: _customFloatingActionButton(context),
-      body: _screens[_selectedIndex],
+      body:  _screens[_selectedIndex]
     );
   }
 }

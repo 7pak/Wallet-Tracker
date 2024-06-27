@@ -1,74 +1,119 @@
-import 'package:flutter/cupertino.dart';
+import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:wallet_tracker/screens/home/blocs/get_expenses/get_expenses_bloc.dart';
 
 class TransactionsList extends StatelessWidget {
   const TransactionsList({super.key});
 
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+    final aDate = DateTime(date.year, date.month, date.day);
 
-  Widget _transacitonItem(){
+    if (aDate == today) {
+      return 'Today';
+    } else if (aDate == yesterday) {
+      return 'Yesterday';
+    } else if (aDate.year == today.year) {
+      return DateFormat('d MMMM').format(date);
+    } else {
+      return DateFormat('d/M/yyyy').format(date);
+    }
+  }
+
+  Widget _transactionItem(Expense expense) {
     return Container(
-      margin: EdgeInsets.only(bottom: 15),
+      margin: const EdgeInsets.only(bottom: 15),
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15)
-      ),
-      child:Padding(
+          color: Colors.white, borderRadius: BorderRadius.circular(15)),
+      child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Row(
           children: [
-            Stack(
-                alignment: Alignment.center,
-                children:[ Container(
-                  height: 50,
-                  width: 50,
-                  decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.deepOrange
-                  ),
-                ),
-                  const Icon(FontAwesomeIcons.burger,color: Colors.white,)
-                ]
+            Stack(alignment: Alignment.center, children: [
+              Container(
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(expense.category.color)),
+              ),
+              Image.asset(
+                'assets/images/${expense.category.icon}',
+                color: Color(expense.category.color).computeLuminance() > 0.5
+                    ? Colors.black
+                    : Colors.white,
+                scale: 1.5,
+              )
+            ]),
+            const SizedBox(
+              width: 10,
             ),
-            const SizedBox(width: 10,),
-            const Text('Food',style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),),
+            Text(
+              expense.category.name,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             const Spacer(),
-            const Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('-\$230.00',style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),),
-                Text('Today',style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.grey),)
+                Text(
+                  '-\$${expense.amount}',
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  _formatDate(expense.date),
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey),
+                )
               ],
             )
           ],
         ),
-      ) ,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return BlocBuilder<GetExpensesBloc, GetExpensesState>(
+        builder: (context, state) {
+      if (state is GetExpensesSuccess) {
+        return Expanded(
+          child: Column(
             children: [
-              const Text('Transactions',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              TextButton(
-                  onPressed: () {},
-                  child: const Text('View all',
-                      style: TextStyle(fontSize: 14, color: Colors.grey)))
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Transactions',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  TextButton(
+                      onPressed: () {},
+                      child: const Text('View all',
+                          style: TextStyle(fontSize: 14, color: Colors.grey)))
+                ],
+              ),
+              Expanded(
+                child: ListView.builder(
+                  reverse: true,
+                    itemCount: state.expenses.length,
+                    itemBuilder: (context, int i) {
+                      return _transactionItem(state.expenses[i]);
+                    }),
+              )
             ],
           ),
-          Expanded(
-            child: ListView.builder(itemCount: 12,itemBuilder: (context,int i){
-              return _transacitonItem();
-            }),
-          )
-        ],
-      ),
-    );
+        );
+      } else {
+        return const Center(child: CircularProgressIndicator());
+      }
+    });
   }
 }
