@@ -62,7 +62,7 @@ class _AddExpenseState extends State<AddExpense> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text('Add Expenses',
+                        const Text('Add Expense',
                             style: TextStyle(
                                 fontSize: 22, fontWeight: FontWeight.w600)),
                         const SizedBox(
@@ -103,6 +103,12 @@ class _AddExpenseState extends State<AddExpense> {
                           height: 32,
                         ),
                         TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Select a category or add new one';
+                            }
+                            return null;
+                          },
                           controller: categoryController,
                           textAlignVertical: TextAlignVertical.center,
                           readOnly: true,
@@ -192,6 +198,12 @@ class _AddExpenseState extends State<AddExpense> {
                         ),
                         TextFormField(
                           controller: dateController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Set a date for the expense';
+                            }
+                            return null;
+                          },
                           onTap: () async {
                             DateTime? newDate = await showDatePicker(
                                 context: context,
