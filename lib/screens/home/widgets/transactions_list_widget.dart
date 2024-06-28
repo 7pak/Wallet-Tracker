@@ -102,10 +102,10 @@ class TransactionsList extends StatelessWidget {
               ),
               Expanded(
                 child: ListView.builder(
-                  reverse: true,
                     itemCount: state.expenses.length,
                     itemBuilder: (context, int i) {
-                      return _transactionItem(state.expenses[i]);
+                      List<Expense> expenses = state.expenses.reversed.toList();
+                      return _transactionItem(expenses[i]);
                     }),
               )
             ],

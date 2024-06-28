@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:wallet_tracker/simple_bloc_observer.dart';
@@ -11,6 +12,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   Bloc.observer = SimpleBlocObserver();
-  runApp(const MyApp());
+  runApp(  MyApp(FirebaseAuthRepository()));
 }
 

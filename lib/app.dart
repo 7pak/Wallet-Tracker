@@ -1,11 +1,19 @@
+import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wallet_tracker/blocs/authentication/authentication_bloc.dart';
 import 'app_view.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final AuthRepository authRepository;
+
+  const MyApp(this.authRepository, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MyAppView();
+    return RepositoryProvider(
+      create: (context) => AuthenticationBloc(authRepository: authRepository),
+      child: const MyAppView(),
+    );
   }
 }

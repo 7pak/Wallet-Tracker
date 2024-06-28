@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wallet_tracker/blocs/login/login_bloc.dart';
 
 Widget homeAppBar(BuildContext context){
   return Row(
@@ -41,9 +43,11 @@ Widget homeAppBar(BuildContext context){
       ),
       const Spacer(),
       IconButton(
-          onPressed: () {},
+          onPressed: () {
+            context.read<LoginBloc>().add(const Logout());
+          },
           icon: const Icon(
-            CupertinoIcons.settings,
+            Icons.login_outlined,
             size: 30,
           )),
     ],
