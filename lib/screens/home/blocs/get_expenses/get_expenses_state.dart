@@ -1,4 +1,4 @@
-part of 'get_expenses_bloc.dart';
+part of 'get_expenses_cubit.dart';
 
 sealed class GetExpensesState extends Equatable {
   const GetExpensesState();

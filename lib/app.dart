@@ -1,7 +1,7 @@
 import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wallet_tracker/blocs/authentication/authentication_bloc.dart';
+import 'package:wallet_tracker/blocs/authentication/authentication_cubit.dart';
 import 'app_view.dart';
 
 class MyApp extends StatelessWidget {
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider(
-      create: (context) => AuthenticationBloc(authRepository: authRepository),
+      create: (context) => AuthenticationCubit(authRepository: authRepository),
       child: const MyAppView(),
     );
   }

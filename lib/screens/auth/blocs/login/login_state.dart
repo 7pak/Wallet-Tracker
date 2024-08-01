@@ -1,4 +1,4 @@
-part of 'login_bloc.dart';
+part of 'login_cubit.dart';
 
 sealed class LoginState extends Equatable {
   const LoginState();
@@ -24,3 +24,5 @@ final class LogoutFailure extends LoginState {
   const LogoutFailure({required this.message});
 
 }
+
+

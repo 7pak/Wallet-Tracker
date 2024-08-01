@@ -2,7 +2,7 @@ import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:wallet_tracker/screens/home/blocs/get_expenses/get_expenses_bloc.dart';
+import 'package:wallet_tracker/screens/home/blocs/get_expenses/get_expenses_cubit.dart';
 
 class TransactionsList extends StatelessWidget {
   const TransactionsList({super.key});
@@ -82,7 +82,7 @@ class TransactionsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GetExpensesBloc, GetExpensesState>(
+    return BlocBuilder<GetExpensesCubit, GetExpensesState>(
         builder: (context, state) {
       if (state is GetExpensesSuccess) {
         return Expanded(

@@ -6,3 +6,5 @@ export 'src/expense/expense_repo.dart';
 export 'src/expense/firebase_expense_repo.dart';
 export 'src/auth/auth_repository.dart';
 export 'src/auth/firebase_auth_repository.dart';
+export 'src/income/income_repo.dart';
+export 'src/income/firebase_income_repo.dart';

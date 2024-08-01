@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
-import 'package:wallet_tracker/screens/add_expense/blocs/create_expense/create_expense_bloc.dart';
-import 'package:wallet_tracker/screens/add_expense/blocs/get_categories/get_categories_bloc.dart';
+import 'package:wallet_tracker/screens/add_expense/blocs/create_expense/create_expense_cubit.dart';
+import 'package:wallet_tracker/screens/add_expense/blocs/get_categories/get_categories_cubit.dart';
 
+import '../../global_custom_widgets.dart';
 import '../widgets/category_dialog.dart';
-import '../widgets/custom_save_button.dart';
+
 
 class AddExpense extends StatefulWidget {
   const AddExpense({super.key});
@@ -35,7 +36,7 @@ class _AddExpenseState extends State<AddExpense> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<CreateExpenseBloc, CreateExpenseState>(
+    return BlocListener<CreateExpenseCubit, CreateExpenseState>(
       listener: (context, state) {
         if (state is CreateExpenseSuccess) {
           Navigator.of(context).pop(true);
@@ -50,7 +51,7 @@ class _AddExpenseState extends State<AddExpense> {
         child: Scaffold(
             appBar: AppBar(
                 backgroundColor: Theme.of(context).colorScheme.background),
-            body: BlocBuilder<GetCategoriesBloc, GetCategoriesState>(
+            body: BlocBuilder<GetCategoriesCubit, GetCategoriesState>(
                 builder: (context, state) {
               if (state is GetCategoriesSuccess) {
                 return Padding(
@@ -249,8 +250,7 @@ class _AddExpenseState extends State<AddExpense> {
                                             int.parse(expenseController.text);
                                         expense.expenseId = const Uuid().v1();
                                         context
-                                            .read<CreateExpenseBloc>()
-                                            .add(CreateExpense(expense));
+                                            .read<CreateExpenseCubit>().createExpense(expense);
                                       }
                                     }))
                         ],

@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wallet_tracker/blocs/login/login_bloc.dart';
 import 'package:wallet_tracker/config/app_colors.dart';
+import 'package:wallet_tracker/screens/auth/blocs/login/login_cubit.dart';
 import 'package:wallet_tracker/screens/auth/widgets/custom_text_button.dart';
 import 'package:wallet_tracker/screens/auth/widgets/custom_text_field.dart';
 
@@ -24,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LoginBloc, LoginState>(
+    return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state is LoginSuccess) {
           isLoading = false;
@@ -118,9 +118,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: MediaQuery.of(context).size.width * 0.5,
                       child: customAuthTextButton('Login', () {
                         if (_formKey.currentState!.validate()) {
-                          context.read<LoginBloc>().add(LoginRequired(
+                          context.read<LoginCubit>().login(
                               email: _emailController.text,
-                              password: _passwordController.text));
+                              password: _passwordController.text);
                         }
                       }),
                     )

@@ -1,4 +1,4 @@
-part of 'create_expense_bloc.dart';
+part of 'create_expense_cubit.dart';
 
 sealed class CreateExpenseState extends Equatable {
   const CreateExpenseState();
@@ -21,3 +21,4 @@ final class CreateExpenseFailure extends CreateExpenseState {
 }
 
 final class CreateExpenseLoading extends CreateExpenseState {}
+

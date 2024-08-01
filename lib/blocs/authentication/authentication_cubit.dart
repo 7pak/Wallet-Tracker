@@ -5,24 +5,17 @@ import 'package:equatable/equatable.dart';
 import 'package:expense_repository/expense_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-part 'authentication_event.dart';
-
 part 'authentication_state.dart';
 
-class AuthenticationBloc
-    extends Bloc<AuthenticationEvent, AuthenticationState> {
+class AuthenticationCubit extends Cubit<AuthenticationState> {
   final AuthRepository authRepository;
   late final StreamSubscription<User?> _userSubscription;
 
-  AuthenticationBloc({required this.authRepository})
-      : super(const AuthenticationState.unknown()) {
-    _userSubscription = authRepository.user.listen((user) {
-      add(AuthenticationUserChanged(user));
-    });
-
-    on<AuthenticationUserChanged>((event, emit) {
-      if (event.user != null) {
-        emit(AuthenticationState.authenticated(event.user!));
+  AuthenticationCubit({required this.authRepository})
+      : super(const AuthenticationState.unknown()){
+    _userSubscription = authRepository.user.listen((user){
+      if (user != null) {
+        emit(AuthenticationState.authenticated(user));
       } else {
         emit(const AuthenticationState.unauthenticated());
       }
@@ -34,4 +27,5 @@ class AuthenticationBloc
     _userSubscription.cancel();
     return super.close();
   }
+
 }

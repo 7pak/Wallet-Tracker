@@ -1,4 +1,4 @@
-part of 'get_categories_bloc.dart';
+part of 'get_categories_cubit.dart';
 
 @immutable
 sealed class GetCategoriesState extends Equatable{

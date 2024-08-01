@@ -5,9 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wallet_tracker/config/app_data.dart';
-import 'package:wallet_tracker/screens/add_expense/blocs/create_category/create_category_bloc.dart';
+import 'package:wallet_tracker/screens/add_expense/blocs/create_category/create_category_cubit.dart';
 
-import 'custom_save_button.dart';
+import '../../global_custom_widgets.dart';
 
 Future getCategoryDialog(BuildContext context) {
   var formKey = GlobalKey<FormState>();
@@ -24,8 +24,8 @@ Future getCategoryDialog(BuildContext context) {
       builder: (cxt) {
         return StatefulBuilder(builder: (cxt, setState) {
           return BlocProvider.value(
-            value: context.read<CreateCategoryBloc>(),
-            child: BlocListener<CreateCategoryBloc, CreateCategoryState>(
+            value: context.read<CreateCategoryCubit>(),
+            child: BlocListener<CreateCategoryCubit, CreateCategoryState>(
               listener: (context, state) {
                 if (state is CreateCategorySuccess) {
                   Navigator.of(cxt).pop(category);
@@ -198,8 +198,7 @@ Future getCategoryDialog(BuildContext context) {
                                       category.icon = iconSelected;
 
                                       context
-                                          .read<CreateCategoryBloc>()
-                                          .add(CreateCategory(category));
+                                          .read<CreateCategoryCubit>().createCategory(category);
                                     }
                                     }))
                         ],

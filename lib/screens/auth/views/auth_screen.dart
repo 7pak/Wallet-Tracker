@@ -1,13 +1,13 @@
 import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wallet_tracker/blocs/authentication/authentication_bloc.dart';
-import 'package:wallet_tracker/blocs/login/login_bloc.dart';
-import 'package:wallet_tracker/blocs/sign_up/sign_up_bloc.dart';
+import 'package:wallet_tracker/blocs/authentication/authentication_cubit.dart';
+import 'package:wallet_tracker/screens/auth/blocs/login/login_cubit.dart';
+import 'package:wallet_tracker/screens/auth/blocs/sign_up/sign_up_cubit.dart';
 import 'package:wallet_tracker/screens/auth/views/login_screen.dart';
 import 'package:wallet_tracker/screens/auth/views/sign_up_screen.dart';
+
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -73,7 +73,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   child: Column(
                     children: [
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 50),
+                        padding: const EdgeInsets.symmetric(horizontal: 50),
                         child: TabBar(
                           controller: _tabController,
                           unselectedLabelColor: Theme.of(context)
@@ -104,14 +104,14 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                           child: MultiBlocProvider(
                         providers: [
                           BlocProvider(
-                              create: (context) => LoginBloc(
+                              create: (context) => LoginCubit(
                                   authRepository: context
-                                      .read<AuthenticationBloc>()
+                                      .read<AuthenticationCubit>()
                                       .authRepository)),
                           BlocProvider(
-                              create: (context) => SignUpBloc(
+                              create: (context) => SignUpCubit(
                                   authRepository: context
-                                      .read<AuthenticationBloc>()
+                                      .read<AuthenticationCubit>()
                                       .authRepository)),
                         ],
                         child: TabBarView(
@@ -124,6 +124,20 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
+              ),
+              Align(
+                alignment: Alignment.topCenter,
+                child: SizedBox(
+                    height: MediaQuery.of(context).size.height / 1.8,
+                    child: Center(
+                      child: Text(
+                        'Welcome back!',
+                        style: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    )),
               )
             ],
           ),

@@ -2,10 +2,10 @@ import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wallet_tracker/screens/auth/blocs/sign_up/sign_up_cubit.dart';
 import 'package:wallet_tracker/screens/auth/widgets/custom_text_button.dart';
 import 'package:wallet_tracker/screens/auth/widgets/password_detector.dart';
 
-import '../../../blocs/sign_up/sign_up_bloc.dart';
 import '../widgets/custom_text_field.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -32,7 +32,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SignUpBloc, SignUpState>(
+    return BlocListener<SignUpCubit, SignUpState>(
   listener: (context, state) {
     if(state is SignUpSuccess){
       isLoading = false;
@@ -41,7 +41,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }else if(state is SignUpFailure){
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(state.message ?? 'An error occurred'), // Use the error message from the state if available
+          content: Text(state.message ?? 'An error occurred'),
           duration: const Duration(seconds: 3),
         ),
       );
@@ -187,9 +187,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           name: _nameController.text,
                         );
                         setState(() {
-                          context.read<SignUpBloc>().add(SignUpRequired(
+                          context.read<SignUpCubit>().signUp(
                               myUser: myUser,
-                              password: _passwordController.text));
+                              password: _passwordController.text);
                         });
                       }
                     }))

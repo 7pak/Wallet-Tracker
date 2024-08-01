@@ -1,4 +1,5 @@
-class AppData{
+
+class AppData {
   static List<String> categoryIconList = [
     'entertainment.png',
     'food.png',
@@ -6,6 +7,7 @@ class AppData{
     'pet.png',
     'shopping.png',
     'tech.png',
-    'travel.png'
+    'travel.png',
+    'other.png'
   ];
 }

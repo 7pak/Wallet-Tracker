@@ -3,10 +3,11 @@ import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wallet_tracker/screens/add_expense/blocs/create_category/create_category_bloc.dart';
-import 'package:wallet_tracker/screens/add_expense/blocs/create_expense/create_expense_bloc.dart';
-import 'package:wallet_tracker/screens/add_expense/blocs/get_categories/get_categories_bloc.dart';
-import 'package:wallet_tracker/screens/home/blocs/get_expenses/get_expenses_bloc.dart';
+import 'package:wallet_tracker/screens/add_expense/blocs/create_category/create_category_cubit.dart';
+import 'package:wallet_tracker/screens/add_expense/blocs/create_expense/create_expense_cubit.dart';
+import 'package:wallet_tracker/screens/add_expense/blocs/get_categories/get_categories_cubit.dart';
+import 'package:wallet_tracker/screens/home/blocs/get_expenses/get_expenses_cubit.dart';
+import 'package:wallet_tracker/screens/home/widgets/customFAB.dart';
 
 import '../../../config/app_colors.dart';
 import '../../add_expense/views/add_expense.dart';
@@ -52,56 +53,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _customFloatingActionButton(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () {
-        Navigator.of(context).push(
-          MaterialPageRoute<bool>(
-            builder: (BuildContext context) => MultiBlocProvider(
-              providers: [
-                BlocProvider(
-                  create: (context) =>
-                      CreateCategoryBloc(FirebaseExpenseRepo()),
-                ),
-                BlocProvider(
-                  create: (context) =>
-                      GetCategoriesBloc(FirebaseExpenseRepo())..add(GetCategories()),
-                ),
-                BlocProvider(
-                  create: (context) =>
-                      CreateExpenseBloc(FirebaseExpenseRepo()),
-                ),
-              ],
-              child: const AddExpense(),
-            ),
-          ),
-        ).then((result) {
-          if (result == true) {
-            context.read<GetExpensesBloc>().add(GetExpenses());
-          }
-        });
-      },
-      shape: const CircleBorder(),
-      child: Container(
-          height: double.infinity,
-          width: double.infinity,
-          decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(colors: [
-                Theme.of(context).colorScheme.tertiary,
-                Theme.of(context).colorScheme.secondary,
-                Theme.of(context).colorScheme.primary,
-              ], transform: const GradientRotation(pi / 4))),
-          child: const Icon(CupertinoIcons.add)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: _bottomNavigationBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: _customFloatingActionButton(context),
+      floatingActionButton: const CustomFABWithPopoutButtons(),
       body:  _screens[_selectedIndex]
     );
   }

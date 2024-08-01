@@ -4,6 +4,8 @@ import 'package:expense_repository/src/models/my_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../../expense_repository.dart';
+
 class FirebaseAuthRepository extends AuthRepository {
   final FirebaseAuth _firebaseAuth;
   final userCollection = FirebaseFirestore.instance.collection('Users');
@@ -31,8 +33,7 @@ class FirebaseAuthRepository extends AuthRepository {
   @override
   Future<void> setUserData(MyUser myUser) async {
     try {
-      //todo add the expenses
-      //await userCollection.doc();
+      await userCollection.doc(myUser.userId).set(myUser.toEntity().toDocument());
     } catch (e) {
       debugPrint('Firebase auth $e');
       rethrow;
@@ -63,5 +64,15 @@ class FirebaseAuthRepository extends AuthRepository {
       debugPrint('Firebase auth $e');
       rethrow;
     }
+  }
+
+   @override
+  Future<MyUser> getUserData() async {
+    var doc =  await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+    MyUser user = MyUser.fromEntity(MyUserEntity.fromDocument(doc.data()!));
+    return user;
   }
 }
