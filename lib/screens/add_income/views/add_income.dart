@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wallet_tracker/screens/add_income/blocs/create_income/create_income_cubit.dart';
 
-import '../../global_custom_widgets.dart';
+import '../../common_widgets/global_custom_widgets.dart';
 
 class AddIncome extends StatefulWidget {
   const AddIncome({super.key});
@@ -34,11 +34,26 @@ class _AddIncomeState extends State<AddIncome> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return BlocListener<CreateIncomeCubit, CreateIncomeState>(
+  listener: (context, state) {
+    if(state is CreateIncomeSuccess){
+      Navigator.of(context).pop(true);
+    }else if(state is CreateIncomeFailure){
+      ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(
+          content: Text('Income creation failed: ${state.message}'),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }else{
+      isLoading = true;
+    }
+  },
+  child: GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Scaffold(
         appBar:
-            AppBar(backgroundColor: Theme.of(context).colorScheme.background),
+            AppBar(backgroundColor: Theme.of(context).colorScheme.surface),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: SingleChildScrollView(
@@ -129,8 +144,17 @@ class _AddIncomeState extends State<AddIncome> {
                           lastDate: DateTime.now().add(const Duration(days: 365)),
                         );
                         if (newDate != null) {
+                          final now = DateTime.now();
+                          newDate = DateTime(
+                            newDate.year,
+                            newDate.month,
+                            newDate.day,
+                            now.hour,
+                            now.minute,
+                            now.second,
+                          );
                           setState(() {
-                            dateController.text = DateFormat('dd/MM/yyyy').format(newDate);
+                            dateController.text = DateFormat('dd/MM/yyyy').format(newDate!);
                             income.date = newDate;
                           });
                         }
@@ -160,6 +184,7 @@ class _AddIncomeState extends State<AddIncome> {
                                 if (formKey.currentState!.validate()) {
                                   income.amount =
                                       int.parse(incomeController.text);
+                                  income.name = incomeNameController.text;
                                   income.incomeId = const Uuid().v1();
                                   context
                                   .read<CreateIncomeCubit>().createIncome(income);
@@ -172,6 +197,7 @@ class _AddIncomeState extends State<AddIncome> {
           ),
         ),
       ),
-    );
+    ),
+);
   }
 }

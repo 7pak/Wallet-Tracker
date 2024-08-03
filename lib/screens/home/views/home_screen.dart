@@ -1,17 +1,11 @@
-import 'dart:math';
-import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wallet_tracker/screens/add_expense/blocs/create_category/create_category_cubit.dart';
-import 'package:wallet_tracker/screens/add_expense/blocs/create_expense/create_expense_cubit.dart';
-import 'package:wallet_tracker/screens/add_expense/blocs/get_categories/get_categories_cubit.dart';
-import 'package:wallet_tracker/screens/home/blocs/get_expenses/get_expenses_cubit.dart';
+import 'package:wallet_tracker/blocs/navigation/navigation_cubit.dart';
 import 'package:wallet_tracker/screens/home/widgets/customFAB.dart';
 
 import '../../../config/app_colors.dart';
-import '../../add_expense/views/add_expense.dart';
-import '../../stats/views/stats_screen.dart';
+import '../../transactions/views/stats_screen.dart';
 import 'main_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -21,28 +15,21 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin{
   static const List<Widget> _screens = <Widget>[
     MainScreen(),
-    StatsScreen(),
+    TransactionsScreen(),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  Widget _bottomNavigationBar() {
+  Widget _bottomNavigationBar(int selectedIndex) {
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
       child: BottomNavigationBar(
           showSelectedLabels: false,
           showUnselectedLabels: false,
           selectedItemColor: AppColors.tertiary,
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
+          currentIndex: selectedIndex,
+          onTap: context.read<NavigationCubit>().setSelectedIndex,
           backgroundColor: Colors.white,
           items: const [
             BottomNavigationBarItem(
@@ -53,13 +40,65 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool _isExpanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 250),
+    );
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _toggleButtons() {
+    if (_isExpanded) {
+      _controller.reverse();
+    } else {
+      _controller.forward();
+    }
+    setState(() {
+      _isExpanded = !_isExpanded;
+    });
+  }
+
+  void _closeButton() {
+    if (_isExpanded) {
+      _controller.reverse();
+      setState(() {
+        _isExpanded = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: (){
+        _closeButton();
+      },
+      child: BlocBuilder<NavigationCubit, NavigationState>(
+  builder: (context, state) {
     return Scaffold(
-      bottomNavigationBar: _bottomNavigationBar(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: const CustomFABWithPopoutButtons(),
-      body:  _screens[_selectedIndex]
+        bottomNavigationBar: _bottomNavigationBar(state.selectedIndex),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton:  CustomFAB(isExpanded: _isExpanded, toggleExpanded: _toggleButtons, animation: _animation),
+        body:  _screens[state.selectedIndex]
+      );
+  },
+),
     );
   }
 }

@@ -3,8 +3,10 @@ import 'dart:math';
 import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wallet_tracker/config/app_colors.dart';
 import 'package:wallet_tracker/screens/add_income/blocs/create_income/create_income_cubit.dart';
 import 'package:wallet_tracker/screens/add_income/views/add_income.dart';
+import 'package:wallet_tracker/screens/home/blocs/get_incomes/get_incomes_cubit.dart';
 
 import '../../add_expense/blocs/create_category/create_category_cubit.dart';
 import '../../add_expense/blocs/create_expense/create_expense_cubit.dart';
@@ -12,56 +14,23 @@ import '../../add_expense/blocs/get_categories/get_categories_cubit.dart';
 import '../../add_expense/views/add_expense.dart';
 import '../blocs/get_expenses/get_expenses_cubit.dart';
 
-class CustomFABWithPopoutButtons extends StatefulWidget {
-  const CustomFABWithPopoutButtons({super.key});
+class CustomFAB extends StatelessWidget {
+  const CustomFAB(
+      {super.key,
+      required this.isExpanded,
+      required this.toggleExpanded,
+      required this.animation});
 
-  @override
-  State<CustomFABWithPopoutButtons> createState() =>
-      _CustomFABWithPopoutButtonsState();
-}
-
-class _CustomFABWithPopoutButtonsState extends State<CustomFABWithPopoutButtons>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-  bool _isExpanded = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 250),
-    );
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _toggleButtons() {
-    if (_isExpanded) {
-      _controller.reverse();
-    } else {
-      _controller.forward();
-    }
-    setState(() {
-      _isExpanded = !_isExpanded;
-    });
-  }
+  final bool isExpanded;
+  final Animation<double> animation;
+  final VoidCallback toggleExpanded;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (_isExpanded)
+        if (isExpanded)
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -72,21 +41,25 @@ class _CustomFABWithPopoutButtonsState extends State<CustomFABWithPopoutButtons>
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   FloatingActionButton(
+                    backgroundColor: AppColors.secondaryColor,
                     onPressed: () {
+                      toggleExpanded();
                       Navigator.of(context)
                           .push(
                         MaterialPageRoute<bool>(
                           builder: (BuildContext context) => MultiBlocProvider(
-                           providers: [
-                             BlocProvider(create: (context)=>CreateIncomeCubit(FirebaseIncomeRepo()))
-                           ],
-                      child: const AddIncome(),
+                            providers: [
+                              BlocProvider(
+                                  create: (context) =>
+                                      CreateIncomeCubit(FirebaseIncomeRepo()))
+                            ],
+                            child: const AddIncome(),
                           ),
                         ),
                       )
                           .then((result) {
                         if (result == true) {
-                         // context.read<GetExpensesCubit>().getExpenses();
+                          context.read<GetIncomesCubit>().getIncomes();
                         }
                       });
                     },
@@ -101,7 +74,9 @@ class _CustomFABWithPopoutButtonsState extends State<CustomFABWithPopoutButtons>
                   const Text('Expense',
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   FloatingActionButton(
+                    backgroundColor: AppColors.secondaryColor,
                     onPressed: () {
+                      toggleExpanded();
                       Navigator.of(context)
                           .push(
                         MaterialPageRoute<bool>(
@@ -143,7 +118,7 @@ class _CustomFABWithPopoutButtonsState extends State<CustomFABWithPopoutButtons>
           padding: const EdgeInsets.all(8.0),
           child: FloatingActionButton(
             backgroundColor: Colors.transparent,
-            onPressed: _toggleButtons,
+            onPressed: toggleExpanded,
             shape: const CircleBorder(),
             child: Container(
               decoration: BoxDecoration(
@@ -157,7 +132,7 @@ class _CustomFABWithPopoutButtonsState extends State<CustomFABWithPopoutButtons>
               child: Center(
                 child: AnimatedIcon(
                   icon: AnimatedIcons.add_event,
-                  progress: _animation,
+                  progress: animation,
                 ),
               ),
             ),

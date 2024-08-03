@@ -7,7 +7,7 @@ import 'package:uuid/uuid.dart';
 import 'package:wallet_tracker/config/app_data.dart';
 import 'package:wallet_tracker/screens/add_expense/blocs/create_category/create_category_cubit.dart';
 
-import '../../global_custom_widgets.dart';
+import '../../common_widgets/global_custom_widgets.dart';
 
 Future getCategoryDialog(BuildContext context) {
   var formKey = GlobalKey<FormState>();

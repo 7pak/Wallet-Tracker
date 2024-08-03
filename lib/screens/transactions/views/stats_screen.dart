@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:wallet_tracker/screens/common_widgets/transactions_list_widget.dart';
+import 'package:wallet_tracker/screens/transactions/widgets/pie_chart.dart';
 
-import '../widgets/chart_widget.dart';
 
-class StatsScreen extends StatelessWidget {
-  const StatsScreen({super.key});
+class TransactionsScreen extends StatelessWidget {
+  const TransactionsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class StatsScreen extends StatelessWidget {
             const Text(
               'Transactions',
               style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                   fontStyle: FontStyle.italic),
             ),
@@ -28,9 +29,11 @@ class StatsScreen extends StatelessWidget {
                 color: Colors.white
               ),
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.width,
-              child: const ChartGraph(),
-            )
+              height: (MediaQuery.of(context).size.width) * 0.5,
+              child: const PieChartStat(),
+            ),
+            const SizedBox(height: 12,),
+            const TransactionsList()
           ],
         ),
       ),

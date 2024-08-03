@@ -7,7 +7,7 @@ import 'package:uuid/uuid.dart';
 import 'package:wallet_tracker/screens/add_expense/blocs/create_expense/create_expense_cubit.dart';
 import 'package:wallet_tracker/screens/add_expense/blocs/get_categories/get_categories_cubit.dart';
 
-import '../../global_custom_widgets.dart';
+import '../../common_widgets/global_custom_widgets.dart';
 import '../widgets/category_dialog.dart';
 
 
@@ -50,7 +50,7 @@ class _AddExpenseState extends State<AddExpense> {
         onTap: FocusScope.of(context).unfocus,
         child: Scaffold(
             appBar: AppBar(
-                backgroundColor: Theme.of(context).colorScheme.background),
+                backgroundColor: Theme.of(context).colorScheme.surface),
             body: BlocBuilder<GetCategoriesCubit, GetCategoriesState>(
                 builder: (context, state) {
               if (state is GetCategoriesSuccess) {
@@ -209,15 +209,23 @@ class _AddExpenseState extends State<AddExpense> {
                             },
                             onTap: () async {
                               DateTime? newDate = await showDatePicker(
-                                  context: context,
-                                  initialDate: expense.date,
-                                  firstDate: DateTime.now(),
-                                  lastDate: DateTime.now()
-                                      .add(const Duration(days: 365)));
+                                context: context,
+                                initialDate: expense.date,
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime.now().add(const Duration(days: 365)),
+                              );
                               if (newDate != null) {
+                                final now = DateTime.now();
+                                newDate = DateTime(
+                                  newDate.year,
+                                  newDate.month,
+                                  newDate.day,
+                                  now.hour,
+                                  now.minute,
+                                  now.second,
+                                );
                                 setState(() {
-                                  dateController.text =
-                                      DateFormat('dd/MM/yyyy').format(newDate);
+                                  dateController.text = DateFormat('dd/MM/yyyy').format(newDate!);
                                   expense.date = newDate;
                                 });
                               }

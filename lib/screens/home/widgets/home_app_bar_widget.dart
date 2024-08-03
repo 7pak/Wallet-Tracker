@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,11 +14,16 @@ Widget homeAppBar(BuildContext context) {
           height: 50,
           width: 50,
           decoration: BoxDecoration(
-              shape: BoxShape.circle, color: Colors.yellow[700]!),
+              shape: BoxShape.circle,
+            gradient: LinearGradient(colors: [
+              Theme.of(context).colorScheme.tertiary,
+              Theme.of(context).colorScheme.secondary,
+              Theme.of(context).colorScheme.primary
+            ], transform: const GradientRotation(pi / 4)),),
         ),
-        Icon(
+        const Icon(
           CupertinoIcons.person_fill,
-          color: Colors.yellow[800]!,
+          color:Colors.white70 ,
           size: 30,
         )
       ]),

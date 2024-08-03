@@ -27,12 +27,12 @@ class _ChartGraphState extends State<ChartGraph> {
           leftTitles: AxisTitles(
               sideTitles: SideTitles(
                   showTitles: true,
-                  reservedSize: 38,
+                  reservedSize: 30,
                   getTitlesWidget: getLeftTitles)),
           bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                   showTitles: true,
-                  reservedSize: 38,
+                  reservedSize: 30,
                   getTitlesWidget: getTiles)),
         ),
         borderData: FlBorderData(show: false),
