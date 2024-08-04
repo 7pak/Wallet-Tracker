@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:wallet_tracker/blocs/authentication/authentication_cubit.dart';
+import 'package:wallet_tracker/core/di/injection_container.dart';
 import 'package:wallet_tracker/screens/auth/blocs/login/login_cubit.dart';
 import 'package:wallet_tracker/screens/auth/blocs/sign_up/sign_up_cubit.dart';
 import 'package:wallet_tracker/screens/auth/views/login_screen.dart';
@@ -104,15 +104,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                           child: MultiBlocProvider(
                         providers: [
                           BlocProvider(
-                              create: (context) => LoginCubit(
-                                  authRepository: context
-                                      .read<AuthenticationCubit>()
-                                      .authRepository)),
+                              create: (context) => locator<LoginCubit>()),
                           BlocProvider(
-                              create: (context) => SignUpCubit(
-                                  authRepository: context
-                                      .read<AuthenticationCubit>()
-                                      .authRepository)),
+                              create: (context) => locator<SignUpCubit>()),
                         ],
                         child: TabBarView(
                             controller: _tabController,

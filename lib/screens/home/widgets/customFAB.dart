@@ -4,6 +4,7 @@ import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wallet_tracker/config/app_colors.dart';
+import 'package:wallet_tracker/screens/add_expense/blocs/remove_category/remove_category_cubit.dart';
 import 'package:wallet_tracker/screens/add_income/blocs/create_income/create_income_cubit.dart';
 import 'package:wallet_tracker/screens/add_income/views/add_income.dart';
 import 'package:wallet_tracker/screens/home/blocs/get_incomes/get_incomes_cubit.dart';
@@ -90,6 +91,10 @@ class CustomFAB extends StatelessWidget {
                                 create: (context) =>
                                     GetCategoriesCubit(FirebaseExpenseRepo())
                                       ..getCategories(),
+                              ),
+                              BlocProvider(
+                                create: (context) =>
+                                    RemoveCategoryCubit(FirebaseExpenseRepo()),
                               ),
                               BlocProvider(
                                 create: (context) =>

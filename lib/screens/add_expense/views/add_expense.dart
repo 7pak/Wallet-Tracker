@@ -6,10 +6,10 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wallet_tracker/screens/add_expense/blocs/create_expense/create_expense_cubit.dart';
 import 'package:wallet_tracker/screens/add_expense/blocs/get_categories/get_categories_cubit.dart';
+import 'package:wallet_tracker/screens/add_expense/blocs/remove_category/remove_category_cubit.dart';
 
 import '../../common_widgets/global_custom_widgets.dart';
 import '../widgets/category_dialog.dart';
-
 
 class AddExpense extends StatefulWidget {
   const AddExpense({super.key});
@@ -49,11 +49,15 @@ class _AddExpenseState extends State<AddExpense> {
       child: GestureDetector(
         onTap: FocusScope.of(context).unfocus,
         child: Scaffold(
-            appBar: AppBar(
-                backgroundColor: Theme.of(context).colorScheme.surface),
+            appBar:
+                AppBar(backgroundColor: Theme.of(context).colorScheme.surface),
             body: BlocBuilder<GetCategoriesCubit, GetCategoriesState>(
                 builder: (context, state) {
               if (state is GetCategoriesSuccess) {
+                Color editedColor =
+                    Color(expense.category.color).computeLuminance() > 0.5
+                        ? Colors.black
+                        : Colors.white;
                 return Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: SingleChildScrollView(
@@ -112,6 +116,7 @@ class _AddExpenseState extends State<AddExpense> {
                             controller: categoryController,
                             textAlignVertical: TextAlignVertical.center,
                             readOnly: true,
+                            style: TextStyle(color: editedColor),
                             decoration: InputDecoration(
                                 filled: true,
                                 fillColor: expense.category == Category.empty
@@ -126,24 +131,18 @@ class _AddExpenseState extends State<AddExpense> {
                                     : Image.asset(
                                         'assets/images/${expense.category.icon}',
                                         scale: 1.8,
+                                        color: editedColor,height: 25,width: 25,
                                       ),
                                 suffixIcon: IconButton(
                                     onPressed: () async {
-                                      var category =
+                                      // var category =
                                           await getCategoryDialog(context);
-
-                                      setState(() {
-                                        state.categories.insert(0, category);
-                                      });
+                                          context.read<GetCategoriesCubit>().getCategories();
                                     },
                                     icon: Icon(Icons.add,
-                                        color: expense.category.color != 0
-                                            ? Color(expense.category.color)
-                                                        .computeLuminance() >
-                                                    0.5
-                                                ? Colors.black
-                                                : Colors.white
-                                            : Colors.black)),
+                                        color: expense.category.color != 0 || expense.category != Category.empty
+                                            ? editedColor
+                                            : Colors.grey)),
                                 hintText: 'Categories',
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
@@ -182,6 +181,25 @@ class _AddExpenseState extends State<AddExpense> {
                                           scale: 2,
                                           color: textColor,
                                         ),
+                                        trailing: BlocListener<
+                                            RemoveCategoryCubit,
+                                            RemoveCategoryState>(
+                                          listener: (context, state) {
+                                            if(state is RemoveCategorySuccess){
+                                              context.read<GetCategoriesCubit>().getCategories();
+                                            }
+                                          },
+                                          child: IconButton(
+                                              onPressed: () {
+                                                context
+                                                    .read<RemoveCategoryCubit>()
+                                                    .removeCategory(category);
+                                              },
+                                              icon: const Icon(
+                                                  Icons.remove_circle_outline,
+                                                  size: 30,
+                                                  color: Colors.red)),
+                                        ),
                                         title: Text(
                                           category.name,
                                           style: TextStyle(color: textColor),
@@ -212,7 +230,8 @@ class _AddExpenseState extends State<AddExpense> {
                                 context: context,
                                 initialDate: expense.date,
                                 firstDate: DateTime.now(),
-                                lastDate: DateTime.now().add(const Duration(days: 365)),
+                                lastDate: DateTime.now()
+                                    .add(const Duration(days: 365)),
                               );
                               if (newDate != null) {
                                 final now = DateTime.now();
@@ -225,7 +244,8 @@ class _AddExpenseState extends State<AddExpense> {
                                   now.second,
                                 );
                                 setState(() {
-                                  dateController.text = DateFormat('dd/MM/yyyy').format(newDate!);
+                                  dateController.text =
+                                      DateFormat('dd/MM/yyyy').format(newDate!);
                                   expense.date = newDate;
                                 });
                               }
@@ -258,7 +278,8 @@ class _AddExpenseState extends State<AddExpense> {
                                             int.parse(expenseController.text);
                                         expense.expenseId = const Uuid().v1();
                                         context
-                                            .read<CreateExpenseCubit>().createExpense(expense);
+                                            .read<CreateExpenseCubit>()
+                                            .createExpense(expense);
                                       }
                                     }))
                         ],

@@ -8,12 +8,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 part 'authentication_state.dart';
 
 class AuthenticationCubit extends Cubit<AuthenticationState> {
-  final AuthRepository authRepository;
+  final AuthRepository _authRepository;
   late final StreamSubscription<User?> _userSubscription;
 
-  AuthenticationCubit({required this.authRepository})
-      : super(const AuthenticationState.unknown()){
-    _userSubscription = authRepository.user.listen((user){
+  AuthenticationCubit({required AuthRepository authRepository})
+      : _authRepository = authRepository, super(const AuthenticationState.unknown()){
+    _userSubscription = _authRepository.user.listen((user){
       if (user != null) {
         emit(AuthenticationState.authenticated(user));
       } else {

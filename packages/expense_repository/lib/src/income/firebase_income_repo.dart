@@ -39,4 +39,20 @@ class FirebaseIncomeRepo extends IncomeRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<void> deleteAllIncomes()async {
+      try {
+        final querySnapshot = await incomesCollection.get();
+
+        WriteBatch batch = FirebaseFirestore.instance.batch();
+
+        for (QueryDocumentSnapshot document in querySnapshot.docs) {
+          batch.delete(document.reference);
+        }
+        await batch.commit();
+      } catch (e) {
+        debugPrint('FirebaseError deleting documents: ${e.toString()}');
+      }
+  }
 }

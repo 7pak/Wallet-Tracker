@@ -4,12 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wallet_tracker/blocs/authentication/authentication_cubit.dart';
 import 'package:wallet_tracker/blocs/navigation/navigation_cubit.dart';
 import 'package:wallet_tracker/config/app_theme.dart';
+import 'package:wallet_tracker/core/di/injection_container.dart';
+import 'package:wallet_tracker/screens/auth/blocs/logout/logout_cubit.dart';
 import 'package:wallet_tracker/screens/auth/views/auth_screen.dart';
+import 'package:wallet_tracker/screens/home/blocs/delete_all_records/delete_all_records_cubit.dart';
 import 'package:wallet_tracker/screens/home/blocs/get_expenses/get_expenses_cubit.dart';
 import 'package:wallet_tracker/screens/home/blocs/get_incomes/get_incomes_cubit.dart';
 import 'package:wallet_tracker/screens/home/blocs/get_user/get_user_cubit.dart';
 import 'package:wallet_tracker/screens/home/views/home_screen.dart';
-
 
 class MyAppView extends StatelessWidget {
   const MyAppView({super.key});
@@ -26,22 +28,24 @@ class MyAppView extends StatelessWidget {
             if (state.status == CurrentUserStatus.authenticated) {
               return MultiBlocProvider(
                 providers: [
-                  BlocProvider(create: (context)=> NavigationCubit()),
+                  BlocProvider(create: (context) => NavigationCubit()),
                   BlocProvider(
                     create: (context) =>
-                    GetExpensesCubit(FirebaseExpenseRepo())
-                      ..getExpenses(),
+                        GetExpensesCubit(FirebaseExpenseRepo())..getExpenses(),
                   ),
                   BlocProvider(
                     create: (context) =>
-                    GetIncomesCubit(FirebaseIncomeRepo())
-                      ..getIncomes(),
+                        GetIncomesCubit(FirebaseIncomeRepo())..getIncomes(),
                   ),
                   BlocProvider(
-                    create: (context) => GetUserCubit(
-                        authRepository:
-                        context.read<AuthenticationCubit>().authRepository)..getUser(),
+                    create: (context) => locator<GetUserCubit>()
+                      ..getUser(),
                   ),
+                  BlocProvider(
+                      create: (context) => DeleteAllRecordsCubit(
+                          FirebaseExpenseRepo(), FirebaseIncomeRepo())),
+                  BlocProvider(
+                      create: (context) => locator<LogoutCubit>())
                 ],
                 child: const HomeScreen(),
               );
@@ -49,7 +53,6 @@ class MyAppView extends StatelessWidget {
               return const AuthScreen();
             }
           },
-        )
-    );
+        ));
   }
 }

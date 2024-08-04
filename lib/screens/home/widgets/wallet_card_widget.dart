@@ -35,16 +35,35 @@ class WalletCard extends StatelessWidget {
       var incomes = context.select((GetIncomesCubit bloc) => bloc.state);
       int totalExpense = 0;
       int totalIncome = 0;
+      DateTime today = DateTime.now();
 
       if (expenses is GetExpensesSuccess) {
-        totalExpense = expenses.expenses
-            .map((element) => element.amount)
-            .reduce((a, b) => a + b);
+        if (expenses.expenses.isNotEmpty) {
+          totalExpense = expenses.expenses
+              .where((element) =>
+                  element.date.isBefore(today) ||
+                  element.date.isAtSameMomentAs(today))
+              .map((element) => element.amount)
+              .reduce((a, b) => a + b);
+        }
       }
+
       if (incomes is GetIncomesSuccess) {
-        totalIncome = incomes.incomes
-            .map((element) => element.amount)
-            .reduce((a, b) => a + b);
+        if (incomes.incomes.isNotEmpty) {
+          totalIncome = incomes.incomes
+              .where((element) =>
+                  element.date.isBefore(today) ||
+                  element.date.isAtSameMomentAs(today))
+              .map((element) => element.amount)
+              .reduce((a, b) => a + b);
+        }
+      }
+
+      int totalBalance;
+      try {
+        totalBalance = totalIncome - totalExpense;
+      } catch (e) {
+        totalBalance = 0;
       }
       return Container(
         width: MediaQuery.of(context).size.width,
@@ -71,7 +90,7 @@ class WalletCard extends StatelessWidget {
                     fontSize: 15,
                     fontWeight: FontWeight.w400)),
             const SizedBox(height: 8),
-             Text('\$ ${totalIncome - totalExpense}.00',
+            Text('\$ $totalBalance.00',
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 32,

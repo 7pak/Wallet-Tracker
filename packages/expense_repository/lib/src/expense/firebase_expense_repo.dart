@@ -44,10 +44,12 @@ class FirebaseExpenseRepo extends ExpenseRepository {
 
   @override
   Future<void> createExpense(Expense expense) async {
-    try {
+      try {
       await expenseCollection
           .doc(expense.expenseId)
           .set(expense.toEntity().toDocument());
+
+      await _updateCategoryTotalExpenses(expense.category.categoryId, expense.amount);
     } catch (e) {
       log('FirebaseError ${e.toString()}');
       rethrow;
@@ -64,6 +66,70 @@ class FirebaseExpenseRepo extends ExpenseRepository {
     } catch (e) {
       debugPrint('FirebaseError ${e.toString()}');
       rethrow;
+    }
+  }
+
+  Future<void> _updateCategoryTotalExpenses(String categoryId,int newAmount)async {
+    try{
+
+      final categoryDoc = await categoryCollection.doc(categoryId).get();
+
+      if (categoryDoc.exists) {
+        final categoryData = categoryDoc.data() as Map<String, dynamic>;
+        final currentTotalCategoryExpenses = categoryData['totalExpenses'] as int? ??
+            0;
+        final updatedTotalCategoryExpenses = currentTotalCategoryExpenses +
+            newAmount;
+
+        await categoryDoc.reference.update({
+          'totalExpenses': updatedTotalCategoryExpenses,
+        });
+      }
+
+    }catch(e){
+      debugPrint("FirebaseError ${e.toString()}");
+    }
+  }
+
+
+  @override
+  Future<void> removeCategory(Category category) async {
+    try {
+      await categoryCollection.doc(category.categoryId).delete();
+    } catch (e) {
+      debugPrint('FirebaseError${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> deleteAllExpenses() async {
+    try {
+      final querySnapshot = await expenseCollection.get();
+
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+
+      for (QueryDocumentSnapshot document in querySnapshot.docs) {
+        batch.delete(document.reference);
+      }
+      await batch.commit();
+      await _resetAllCategoryTotalExpenses();
+    } catch (e) {
+      debugPrint('FirebaseError deleting documents: ${e.toString()}');
+    }
+  }
+
+  Future<void> _resetAllCategoryTotalExpenses() async {
+    try {
+
+      final querySnapshot = await categoryCollection.get();
+
+      for (var doc in querySnapshot.docs) {
+        await doc.reference.update({
+          'totalExpenses': 0,
+        });
+      }
+    } catch (e) {
+      debugPrint("FirebaseError ${e.toString()}");
     }
   }
 }

@@ -24,7 +24,7 @@ class MainScreen extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            const TransactionsList()
+             const TransactionsList()
           ],
         ),
       ),

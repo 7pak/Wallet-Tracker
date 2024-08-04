@@ -29,6 +29,7 @@ Future getCategoryDialog(BuildContext context) {
               listener: (context, state) {
                 if (state is CreateCategorySuccess) {
                   Navigator.of(cxt).pop(category);
+
                 } else if (state is CreateCategoryLoading) {
                   setState(() {
                     isLoading = true;
@@ -84,7 +85,7 @@ Future getCategoryDialog(BuildContext context) {
                                     ? null
                                     : Image.asset(
                                         'assets/images/$iconSelected',
-                                        scale: 2,
+                                        scale: 2,width: 25,height: 25,
                                       ),
                                 suffixIcon: const Icon(
                                   CupertinoIcons.chevron_down,
@@ -155,6 +156,9 @@ Future getCategoryDialog(BuildContext context) {
                                 filled: true,
                                 fillColor: colorSelected,
                                 hintText: 'Color',
+                                hintStyle: TextStyle(color:  colorSelected.computeLuminance() > 0.5
+                                    ? Colors.black
+                                    : Colors.white),
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide.none)),
