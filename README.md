@@ -32,6 +32,12 @@ This wallet tracker app leverages a range of modern technologies to deliver a ro
 - **Error Handling**: Implements robust error handling to manage and display errors gracefully.
 - **Delete All Records**: Allows users to delete all expense records at once with a confirmation dialog to prevent accidental deletions.
 
+## Installation
+
+To use the WalletWhiz app,
+you can download it from the following link: 
+[WalletWhiz apk](https://www.mediafire.com/file/7gqvp1j3sir66tg/wallet-whiz.apk/file)
+
 ## Upcoming implementations
 
 - **Local Stroage**: Ability to access your wallet while being offline.
