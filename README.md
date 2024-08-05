@@ -34,7 +34,7 @@ This wallet tracker app leverages a range of modern technologies to deliver a ro
 
 ## Upcoming implementations
 
-- **Local Stroage**: Ability to access your wallet while being .
+- **Local Stroage**: Ability to access your wallet while being offline.
 
 
 
