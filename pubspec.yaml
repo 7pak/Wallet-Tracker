@@ -32,7 +32,12 @@ dependencies:
     path: packages/expense_repository
   uuid: ^4.4.0
   get_it: ^7.7.0
+  flutter_launcher_icons: ^0.13.1
 
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/wallet_whiz.png"
 
 dev_dependencies:
   flutter_test:
